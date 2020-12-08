@@ -45,10 +45,11 @@ topinv(N,Facts,Facts2,P):-
     cycle(N,[],Facts1,[],Facts2,_,P).
 
 %% cycle(+N,+Facts,+G1,+Prog,-Facts2,-G2,-Prog2)
-%% iterate TP operator until no more new facts can be generated and for at most N iterations
+%% iterate TP operator until no more new facts can be generated or until N iterations have been performed
 %% Facts is the set of initial facts
 %% G1 is the set of new initial facts
 %% Prog is the initial program
+%% to do: automatic selection of N based upon the number of predicates invented
 cycle(0,F,G,P,F,G,P) :-!.
 cycle(N,Facts1,G1,Prog1,Facts3,G3,Prog3) :-
     format('Iteration ~w \n',[N]),
@@ -69,8 +70,6 @@ mktop(F1,G2,Prog,F2,NewFacts,Top) :-
     merge_preds(Preds1,Preds),
     append(G2,F1,AllFacts),
     add_predicates(AllFacts,Prog,Preds,NewFacts2,Top),
-    length(Top,U),
-    format('Number of candidates ~w \n',[U]),
     append(F1,G2,F2),
     subtract(NewFacts2,F2,NewFacts).
 
@@ -100,7 +99,7 @@ prove([H|T],F1,G2):-
     body_pred_topinv(P/A),
     prove(T,F1,G2).
 
-%% the proof can terminate only if at least one new facts has been used
+%% the proof can terminate only if at least one new fact has been used
 prove_([],_,_).
 prove_([H|T],F1,G2):-
     member(H,F1),
@@ -117,6 +116,7 @@ prove_([H|T],F1,G2):-
 
 %% mkcl(+meta(Name,Sub),Clause)
 %% contruct a predicate name for the head literal as the concatenation of the higher-order variables from the meta substitution that are used in a body literal
+%% this ensures unicity of the Skolem constants generated
 mkcl(meta(Name,Sub),(Head :- Body)) :-
     metarule_topinv(Name,Sub,Head,Body),
     findall(P,(member(P,Sub),ground(P)),Sub2),
@@ -148,6 +148,7 @@ my_term_to_atom(P,Atom):-
             atomic_list_concat(List2,Atom)).
 
 %% gathers all the facts corresponding to the same predicate into a list associated with the predicate name
+%% this accounts for the fact that a same definition can be generated multiple times
 merge_preds([],[]).
 merge_preds([p(P,A,[H],Sub,C)|Rest],[p(P,A,Facts,Sub,C)|Rest2]):-
     findall(H1,member(p(P,A,[H1],Sub,C),[p(P,A,[H],Sub,C)|Rest]),Facts),
