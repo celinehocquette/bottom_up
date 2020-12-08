@@ -25,6 +25,8 @@
 :- dynamic user:body_pred_topinv/1,
         user:body_pred/1.
 
+%% to do: recursive metarules are higher-order ones are not supported yet
+
 %% learn_bottom_up(+N,+J,+Pos,+Neg,-H)
 %% N number of iterations
 %% J number of examples sampled for sampling facts in the bottom-up step

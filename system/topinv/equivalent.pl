@@ -39,6 +39,7 @@ current_predicates(Prog,Preds):-
     sort(Preds1,Preds).
 
 %% redundant predicates are those which have the same success set over the sampled facts, the fact it is based upon the sampled facts limits the complexity
+%% improvements: could be set-up to be epsilon-equivalent to further prune the set of invented predicates
 %% the new predicates are compared against the previously accepted ones, which can get expensive after a certain number of iterations
 redundant_preds(NewPreds,CurrentPred,SSProg,SavedPreds):-
     findall(p(P,A,SSP,Sub,C),
@@ -108,7 +109,8 @@ set_non_eq(S1,S2):-
 %% SS(P) = {A in hb(P) | A has a successful SLD derivation for P} where hb(P) represents the Herband base of the logic program P
 success_set(Prog,I):-
     least_fix_point_([],Prog,[],I).
-    
+
+%% computes the least fix point of the program Prog. In practice, since the program is stratified, it does not require many iterations.
 least_fix_point_(Facts,Prog,NewFacts,I):-
     tp(Facts,Prog,Facts1),
     ((sort(Facts,F),
@@ -128,7 +130,7 @@ success_set_pred(P/A,SSProg,SS):-
     length(Args,A)),
     SS).
 
-%% vanilla TP operator, without the efficiency improvement used in topinv.pl
+%% vanilla TP operator, without the efficiency improvement used in topinv.pl,
 tp(Facts,Prog,NewFacts):-
     findall(H,tp_(Facts,Prog,H),NewFacts).
 
