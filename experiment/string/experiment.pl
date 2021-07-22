@@ -31,8 +31,8 @@ metarule(chain, [P,Q,R], [P,A,B], [[Q,A,C],[R,C,B]]).
 metagol:min_clauses(1).
 
 max_iterations_bottomup(1).
-sample_iterations(6).
-
+sample_iterations(3).
+ordering(back).
 
 %% functional restriction to compensate the lack of negative examples
 metagol:functional.
@@ -57,19 +57,17 @@ experiment(M,C):-
     retractall(user:max_clauses_topdown(_)),
     asserta(user:max_clauses_topdown(C)),
     findall(P/A, user:body_pred_topinv(P/A),Ps),
-    learning(Ps,1,M,Tasks,[]).
+    learning(Ps,1,M,Tasks).
 
-learning(_,_,_,[],_) :- !.
-learning(_,M1,M,_,_) :- M1>M,!.
-learning(Ps,M1,M,Tasks,SolvedSoFar):-
+learning(_,M1,M,_) :- M1>M,!.
+learning(Ps,M1,M,Tasks):-
     format('\n\n % Iteration: ~w\n',[M1]),
-    learn_tasks(M1,Ps,Tasks,SolvedSoFar,Remain,Solved2),!,
-    append(SolvedSoFar,Solved2,AllSolved),
+    learn_tasks(M1,Ps,Tasks),!,
     M2 is M1+1,
-    learning(Ps,M2,M,Remain,AllSolved).
+    learning(Ps,M2,M,Tasks).
 
-learn_tasks(_,_,[],_,[],[]).
-learn_tasks(M1,Ps,[task(T,Train,Test)|Tasks],SolvedSoFar,Remain,Solved):-
+learn_tasks(_,_,[]).
+learn_tasks(M1,Ps,[task(T,Train,Test)|Tasks]):-
     nl, nl,
     writeln(Train),
     writeln(Test),
@@ -83,8 +81,7 @@ learn_tasks(M1,Ps,[task(T,Train,Test)|Tasks],SolvedSoFar,Remain,Solved):-
     accuracy(T,Test,H),
     format('% solved: ~w ~w\n',[T,S]),
     retract_inv_pred(H1),
-    learn_tasks(M1,Ps,Tasks,SolvedSoFar,Remain1,Solved1),
-    add_task(task(T,Train,Test),S,Remain1,Solved1,Remain,Solved).
+    learn_tasks(M1,Ps,Tasks).
 
 
 learn(1,_,Pos,Neg,[],H,1):-

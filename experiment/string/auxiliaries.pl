@@ -24,9 +24,3 @@ reset_body_preds(Ps):-
     forall(member(P/A,Ps), assertz(user:body_pred_topinv(P/A))),
     retractall(body_pred(_)),
     forall(member(P/A,Ps), assertz(user:body_pred(P/A))).
-
-
-%% add_task(Task,Remain,Solved,Remain1,Solved1)
-%% add the task Task to either Remain if it has not been solved and to Solved otherwise
-add_task(task(T,Train,Test),0,Remain1,Solved,[task(T,Train,Test)|Remain1],Solved) :- !.
-add_task(Task,1,Remain,Solved1,Remain,[Task|Solved1]).

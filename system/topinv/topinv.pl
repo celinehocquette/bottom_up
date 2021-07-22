@@ -167,11 +167,26 @@ predicate_name((H :- _),P/A):-
 assert_inv_pred([]).
 assert_inv_pred([sub(Name,P,A,Sub,_)|Rest]):-
     member(P,Sub),
+    user:ordering(front),!,
     ((\+(user:body_pred_topinv(P/A)))->
         (assertz(user:body_pred_topinv(P/A)));
             true),
     ((\+(user:body_pred(P/A)))->
         (assertz(user:body_pred(P/A)));
+            true),
+    metarule_topinv(Name,Sub,Head,Body),
+    excapsulate_clause((Head :- Body),(Head1 :- Body1)),
+    retractall(user:Head1),
+    asserta(user:Head1:-Body1),
+    assert_inv_pred(Rest).
+assert_inv_pred([sub(Name,P,A,Sub,_)|Rest]):-
+    member(P,Sub),
+    user:ordering(back),!,
+    ((\+(user:body_pred_topinv(P/A)))->
+        (asserta(user:body_pred_topinv(P/A)));
+            true),
+    ((\+(user:body_pred(P/A)))->
+        (asserta(user:body_pred(P/A)));
             true),
     metarule_topinv(Name,Sub,Head,Body),
     excapsulate_clause((Head :- Body),(Head1 :- Body1)),

@@ -1,6 +1,6 @@
 # bottom_up
 
-This repository contains the code of the paper *Complete Bottom-Up Predicate Invention in Meta-Interpretive Learning*, Céline Hocquette and Stephen H. Muggleton, IJCAI 2020.
+This repository contains the code of the paper *Complete Bottom-Up Predicate Invention in Meta-Interpretive Learning*, Céline Hocquette and Stephen H. Muggleton, IJCAI 2020 available [here]:https://www.ijcai.org/Proceedings/2020/0320.pdf
 
 These experiments have been run with SWI-Prolog. 
 

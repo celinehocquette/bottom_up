@@ -28,6 +28,7 @@ metagol:min_clauses(1).
 metagol:max_clauses(8).
 
 sample_iterations(6).
+ordering(front).
 
 %% task(+S,+N,+K,+L)
 %% S system, among metagol or bottomup
